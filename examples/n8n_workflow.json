@@ -1,0 +1,39 @@
+{
+  "name": "M3ta-UI-TARS Submit Task",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "m3ta-uitars-trigger",
+        "responseMode": "lastNode"
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{$env.M3TA_UITARS_BASE_URL}}/v1/tasks",
+        "authentication": "headerAuth",
+        "options": {},
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{$env.M3TA_UITARS_API_TOKEN}}" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"instruction\": $json.instruction,\n  \"agent_id\": $json.agent_id || \"hermes\",\n  \"surface\": $json.surface || \"browser\",\n  \"starting_url\": $json.starting_url,\n  \"dry_run\": $json.dry_run !== undefined ? $json.dry_run : true,\n  \"confirmation_token\": $json.confirmation_token,\n  \"metadata\": $json.metadata || {}\n}"
+      },
+      "name": "Submit to M3ta UI-TARS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [500, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": { "main": [[{ "node": "Submit to M3ta UI-TARS", "type": "main", "index": 0 }]] }
+  }
+}
