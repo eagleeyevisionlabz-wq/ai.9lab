@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background: #0b0f14;
+  color: #f5f7fa;
+  font-feature-settings: "ss01", "ss02", "tnum";
+}
+
+* {
+  border-color: #263244;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(38, 50, 68, 0.35) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(38, 50, 68, 0.35) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-position: -1px -1px;
+}
+
+@keyframes pulseSoft {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.pulse-soft {
+  animation: pulseSoft 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-soft {
+    animation: none;
+  }
+}
