@@ -1,0 +1,180 @@
+version: 1.0
+contract: m3ta-os-ods-job
+
+job_id:
+  pattern: '^M3TA-[0-9]{8}-[0-9]{3,}$'
+  example: M3TA-20260902-001
+
+state_machine:
+  initial: INTAKE
+  states:
+    - INTAKE
+    - PLANNED
+    - QUEUED
+    - RUNNING
+    - BLOCKED
+    - QA
+    - READY_FOR_REVIEW
+    - APPROVED
+    - RELEASED
+    - CLOSED
+    - CANCELLED
+  transitions:
+    INTAKE: [PLANNED, CANCELLED]
+    PLANNED: [QUEUED, BLOCKED, CANCELLED]
+    QUEUED: [RUNNING, BLOCKED, CANCELLED]
+    RUNNING: [QA, BLOCKED, CANCELLED]
+    BLOCKED: [PLANNED, QUEUED, CANCELLED]
+    QA: [READY_FOR_REVIEW, RUNNING, BLOCKED]
+    READY_FOR_REVIEW: [APPROVED, RUNNING, CLOSED]
+    APPROVED: [RELEASED, CLOSED, RUNNING]
+    RELEASED: [CLOSED]
+
+job:
+  required:
+    - mission_id
+    - title
+    - requester
+    - project
+    - objective
+    - deliverables
+    - acceptance_criteria
+    - risk
+    - approval_mode
+    - execution
+  properties:
+    mission_id:
+      type: string
+      description: Immutable ODS job identifier.
+    title:
+      type: string
+    requester:
+      type: string
+      enum: [M3ta, Metatron, C0ach_M3ta, Hermes, Qu3bii, Grokky, ODS]
+    project:
+      type: string
+    brand:
+      type: string
+      enum:
+        - M3ta-OS
+        - Qu3bii
+        - AI_Architect_ai
+        - M3taz_a3y3_Vizion_Labz
+        - Th3_M3ta-V3rse
+        - Coach_Metatron
+        - Affiliate_Operations
+        - Internal
+    priority:
+      type: string
+      enum: [P0, P1, P2, P3]
+      default: P2
+    objective:
+      type: string
+    business_outcome:
+      type: string
+    source_of_truth:
+      type: object
+      properties:
+        repository: { type: string }
+        branch: { type: string }
+        tickets: { type: array, items: { type: string } }
+        knowledge_refs: { type: array, items: { type: string } }
+        source_files: { type: array, items: { type: string } }
+    constraints:
+      type: array
+      items: { type: string }
+    deliverables:
+      type: array
+      items: { type: string }
+    acceptance_criteria:
+      type: array
+      items: { type: string }
+    risk:
+      type: string
+      enum: [low, medium, high, critical]
+    data_classification:
+      type: string
+      enum: [public, internal, confidential, restricted]
+      default: internal
+    approval_mode:
+      type: string
+      enum: [draft_only, sandbox, pull_request, release_candidate, production_approval]
+      default: draft_only
+    execution:
+      type: object
+      required: [primary_node, model_profile, verifier_profile]
+      properties:
+        primary_node:
+          type: string
+          enum: [bb, omarchy, mac_m5, approved_cloud_worker]
+        fallback_node:
+          type: string
+          enum: [bb, omarchy, mac_m5, approved_cloud_worker]
+        model_profile:
+          type: string
+          enum: [LOCAL_FAST, LOCAL_CODER, LOCAL_REASONER, LOCAL_VISION, FRONTIER_PLAN, FRONTIER_CODER]
+        verifier_profile:
+          type: string
+          enum: [VERIFIER, MANUAL_REVIEW]
+        network_scope:
+          type: string
+          enum: [offline, tailscale_private, authenticated_internal, approved_external]
+          default: tailscale_private
+    approvals_required_before:
+      type: array
+      items:
+        type: string
+        enum:
+          - external_message
+          - publish
+          - spend
+          - credential_change
+          - production_deploy
+          - production_database_change
+          - protected_branch_merge
+          - delete_or_export_data
+          - access_control_change
+    artifacts:
+      type: object
+      properties:
+        manifest_uri: { type: string }
+        branch: { type: string }
+        commit: { type: string }
+        preview_uri: { type: string }
+        checksums_uri: { type: string }
+    audit:
+      type: object
+      properties:
+        requested_at: { type: string, format: date-time }
+        planned_by: { type: string }
+        dispatched_at: { type: string, format: date-time }
+        executed_by: { type: string }
+        verified_by: { type: string }
+        approved_by: { type: string }
+        closed_at: { type: string, format: date-time }
+
+policy:
+  default_route:
+    business_coordination: grokky
+    code_and_repositories: bb
+    containers_background_jobs: omarchy
+    mlx_private_creative_work: mac_m5
+    qa_and_security_verification: argus
+    durable_knowledge: archivist
+  hard_gates:
+    - external_message
+    - publish
+    - spend
+    - credential_change
+    - production_deploy
+    - production_database_change
+    - protected_branch_merge
+    - delete_or_export_data
+    - access_control_change
+  hard_gate_authority: M3ta
+  execution_principles:
+    - Send compact task capsules rather than raw conversational history.
+    - Do not place secrets, tokens, or credentials in prompts, logs, or artifacts.
+    - Use isolated branches, worktrees, containers, or sandboxes for execution.
+    - Require independent verification for high-risk work and all release candidates.
+    - Return artifact references and evidence, not raw terminal logs, to GrokBot.

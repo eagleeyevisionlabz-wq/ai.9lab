@@ -1,0 +1,65 @@
+# Qu3bii Mission Packet Template
+# Copy this template before dispatching a technical mission to ODS.
+
+mission_id: M3TA-YYYYMMDD-001
+title: ""
+requester: M3ta
+requested_via: Hermes|Qu3bii|Grokky|Manual
+project: ""
+brand: Internal
+priority: P2
+risk: low
+data_classification: internal
+
+objective: >
+  
+
+business_outcome: >
+  
+
+source_of_truth:
+  repository: ""
+  branch: ""
+  tickets: []
+  knowledge_refs: []
+  source_files: []
+
+constraints:
+  - "No secrets, tokens, or credentials in prompts, logs, or artifacts."
+  - "No external communication, publishing, spend, deployment, or destructive action without explicit M3ta approval."
+
+deliverables:
+  - ""
+
+acceptance_criteria:
+  - ""
+
+execution:
+  primary_node: bb
+  fallback_node: omarchy
+  model_profile: LOCAL_CODER
+  verifier_profile: VERIFIER
+  network_scope: tailscale_private
+
+approval_mode: sandbox
+approvals_required_before:
+  - protected_branch_merge
+  - production_deploy
+
+reporting:
+  status_destination: Qu3bii
+  human_summary_destination: Grokky
+  artifact_registry: ODS
+  task_tracker: Plane_or_Linear
+
+completion_record_required:
+  - mission_id
+  - execution_plan
+  - changed_files
+  - commands_run
+  - test_results
+  - verification_result
+  - artifact_manifest_uri
+  - known_limitations
+  - rollback_plan
+  - next_action
